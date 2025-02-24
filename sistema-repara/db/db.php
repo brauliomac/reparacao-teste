@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";      
 $password = "";         
-$dbname = "it_requests";
+$dbname = "tb_reparacao";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

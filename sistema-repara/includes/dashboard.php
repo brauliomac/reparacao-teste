@@ -5,18 +5,18 @@ if(!isset($_SESSION['user_id'])){
     exit;
 }
 
-$role = $_SESSION['role'];
+$papel = $_SESSION['papel'];
 
-if($role == 'client'){
-    header("Location: ../users/cliente/client_dashboard.php");
+if($papel == 'cliente'){
+    header("Location: ../users/cliente/cliente_dashboard.php");
     exit;
-} elseif($role == 'employee'){
-    header("Location: ../users/func/employee_dashboard.php");
+} elseif($papel == 'funcionario'){
+    header("Location: ../users/func/funcionario_dashboard.php");
     exit;
-} elseif($role == 'technician'){
-    header("Location: ../users/tecnico/technician_dashboard.php");
+} elseif($papel == 'tecnico'){
+    header("Location: ../users/tecnico/tecnico_dashboard.php");
     exit;
-}  elseif($role == 'admin'){
+}  elseif($papel == 'admin'){
     header("Location: ../users/admin/admin_dashboard.php");
     exit;
 }else {

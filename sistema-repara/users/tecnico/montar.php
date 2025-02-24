@@ -1,19 +1,19 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'technician') {
+if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'tecnico') {
     header("Location: ../../login.php");
     exit;
 }
 include '../../db/db.php';
 
-if (isset($_POST['request_id'])) {
-    $request_id = intval($_POST['request_id']);
+if (isset($_POST['pedido_id'])) {
+    $pedido_id = intval($_POST['pedido_id']);
 } else {
     die("ID da solicitação não informado.");
 }
 
 // Verifica se ainda há peças faltantes
-$sqlCheck = "SELECT SUM(quantity_missing) AS total_missing FROM request_parts WHERE request_id = $request_id";
+$sqlCheck = "SELECT SUM(quantidade_em_falta) AS total_missing FROM pedido_partes WHERE pedido_id = $pedido_id";
 $resultCheck = $conn->query($sqlCheck);
 $total_missing = 0;
 if ($resultCheck && $row = $resultCheck->fetch_assoc()) {
@@ -24,9 +24,9 @@ if ($total_missing > 0) {
 }
 
 // Atualiza o status da solicitação para "finished"
-$sqlUpdate = "UPDATE requests SET status='mounted' WHERE id = $request_id";
+$sqlUpdate = "UPDATE pedidos SET status='montado' WHERE id = $pedido_id";
 if ($conn->query($sqlUpdate) === TRUE) {
-    header("Location: comprovante_montagem.php?id=" . $request_id);
+    header("Location: comprovante_montagem.php?id=" . $pedido_id);
     exit;
 } else {
     echo "Erro ao finalizar montagem: " . $conn->error;

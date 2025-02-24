@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'technician') {
+if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'tecnico') {
     header("Location: ../../login.php");
     exit;
 }
@@ -8,9 +8,9 @@ include '../../db/db.php';
 
 // Obtém o ID da solicitação via GET ou via POST (caso o formulário seja submetido)
 if (isset($_GET['id'])) {
-    $request_id = intval($_GET['id']);
-} elseif (isset($_POST['request_id'])) {
-    $request_id = intval($_POST['request_id']);
+    $pedido_id = intval($_GET['id']);
+} elseif (isset($_POST['pedido_id'])) {
+    $pedido_id = intval($_POST['pedido_id']);
 } else {
     die("Solicitação inválida.");
 }
@@ -23,9 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($action == 'update_status') {
             if (isset($_POST['new_status'])) {
                 $new_status = $_POST['new_status'];
-                $allowed_status = array('in_progress', 'completed');
+                $allowed_status = array('pendente', 'diagnosticado'); 
                 if (in_array($new_status, $allowed_status)) {
-                    $sql = "UPDATE requests SET status = '$new_status' WHERE id = $request_id";
+                    $sql = "UPDATE pedidos SET status = '$new_status' WHERE id = $pedido_id";
                     if (!$conn->query($sql)) {
                         $error_status = "Erro ao atualizar status: " . $conn->error;
                     } else {
@@ -45,35 +45,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $error_part = "A quantidade deve ser maior que zero.";
                 } else {
                     // Consulta a quantidade disponível em estoque para a peça selecionada
-                    $sql = "SELECT quantity FROM inventory WHERE id = $part_id";
+                    $sql = "SELECT quantidade FROM registo WHERE id = $part_id";
                     $result = $conn->query($sql);
                     if ($result && $result->num_rows == 1) {
                         $row = $result->fetch_assoc();
-                        $available = intval($row['quantity']);
+                        $available = intval($row['quantidade']);
                         if ($quantity_required <= $available) {
                             // Há estoque suficiente: usa a quantidade solicitada
-                            $quantity_used = $quantity_required;
-                            $quantity_missing = 0;
+                            $quantidade_usada = $quantity_required;
+                            $quantidade_em_falta = 0;
                             $new_stock = $available - $quantity_required;
                         } else {
                             // Estoque insuficiente: usa o que está disponível e calcula a quantidade faltante
-                            $quantity_used = $available;
-                            $quantity_missing = $quantity_required - $available;
+                            $quantidade_usada = $available;
+                            $quantidade_em_falta = $quantity_required - $available;
                             $new_stock = 0;
                         }
                         // Atualiza o estoque para a peça
-                        $updateInv = "UPDATE inventory SET quantity = $new_stock WHERE id = $part_id";
+                        $updateInv = "UPDATE registo SET quantidade = $new_stock WHERE id = $part_id";
                         $conn->query($updateInv);
                         
                         // Registra a utilização da peça na solicitação
-                        $insertPart = "INSERT INTO request_parts (request_id, part_id, quantity_used, quantity_missing) VALUES ($request_id, $part_id, $quantity_used, $quantity_missing)";
+                        $insertPart = "INSERT INTO pedido_partes (pedido_id, part_id, quantidade_usada, quantidade_em_falta) VALUES ($pedido_id, $part_id, $quantidade_usada, $quantidade_em_falta)";
                         if ($conn->query($insertPart)) {
                             $success_part = "Peça adicionada ao diagnóstico.";
                             // Se houver quantidade faltante, gera um pedido de compra para o departamento de compras
-                            if ($quantity_missing > 0) {
-                                $insertPurchase = "INSERT INTO purchase_requests (component_id, quantity_needed) VALUES ($part_id, $quantity_missing)";
+                            if ($quantidade_em_falta > 0) {
+                                $insertPurchase = "INSERT INTO pedidos_compra (componente_id, quantidade_necessaria) VALUES ($part_id, $quantidade_em_falta)";
                                 $conn->query($insertPurchase);
-                                $warning_part = "Estoque insuficiente. Pedido de compra gerado para $quantity_missing unidades.";
+                                $warning_part = "Estoque insuficiente. Pedido de compra gerado para $quantidade_em_falta unidades.";
                             }
                         } else {
                             $error_part = "Erro ao registrar a peça: " . $conn->error;
@@ -90,35 +90,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Obtém os dados da solicitação
-$sql = "SELECT r.*, u.name AS client_name FROM requests r JOIN users u ON r.client_id = u.id WHERE r.id = $request_id";
-$requestResult = $conn->query($sql);
-if (!$requestResult || $requestResult->num_rows != 1) {
+$sql = "SELECT r.*, u.name AS cliente_name FROM pedidos r JOIN users u ON r.cliente_id = u.id WHERE r.id = $pedido_id";
+$pedidoResult = $conn->query($sql);
+if (!$pedidoResult || $pedidoResult->num_rows != 1) {
     die("Solicitação não encontrada.");
 }
-$requestData = $requestResult->fetch_assoc();
+$pedidoData = $pedidoResult->fetch_assoc();
 
 // Obtém as peças já adicionadas para essa solicitação
-$sqlParts = "SELECT rp.*, i.component FROM request_parts rp JOIN inventory i ON rp.part_id = i.id WHERE rp.request_id = $request_id";
+$sqlParts = "SELECT rp.*, i.componente FROM pedido_partes rp JOIN registo i ON rp.part_id = i.id WHERE rp.pedido_id = $pedido_id";
 $partsResult = $conn->query($sqlParts);
 
 // Obtém todas as peças do estoque para popular o select do formulário
-$sqlAllParts = "SELECT * FROM inventory ORDER BY component ASC";
+$sqlAllParts = "SELECT * FROM registo ORDER BY componente ASC";
 $allPartsResult = $conn->query($sqlAllParts);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Diagnóstico da Solicitação #<?php echo $request_id; ?></title>
+    <title>Diagnóstico da Solicitação #<?php echo $pedido_id; ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="icon" href="../../img/icon.png" type="image/x-icon">
 </head>
 <body>
 <div class="container">
-    <h2 class="mt-5">Diagnóstico da Solicitação #<?php echo $request_id; ?></h2>
-    <p><strong>Cliente:</strong> <?php echo htmlspecialchars($requestData['client_name']); ?></p>
-    <p><strong>Descrição:</strong> <?php echo htmlspecialchars($requestData['description']); ?></p>
-    <p><strong>Status Atual:</strong> <?php echo $requestData['status']; ?></p>
+    <h2 class="mt-5">Diagnóstico da Solicitação #<?php echo $pedido_id; ?></h2>
+    <p><strong>cliente:</strong> <?php echo htmlspecialchars($pedidoData['cliente_name']); ?></p>
+    <p><strong>Descrição:</strong> <?php echo htmlspecialchars($pedidoData['descricao']); ?></p>
+    <p><strong>Status Atual:</strong> <?php echo $pedidoData['status']; ?></p>
 
     <!-- Formulário para atualizar o status da solicitação 
     <h4>Atualizar Status</h4>
@@ -127,12 +127,12 @@ $allPartsResult = $conn->query($sqlAllParts);
    
     <form method="post" action="diagnostico.php">
         <input type="hidden" name="action" value="update_status">
-        <input type="hidden" name="request_id" value="<?php echo $request_id; ?>">
+        <input type="hidden" name="pedido_id" value="<?php echo $pedido_id; ?>">
         <div class="form-group">
             <label for="new_status">Novo Status</label>
             <select name="new_status" id="new_status" class="form-control" required>
-                <option value="in_progress" <?php if ($requestData['status'] == 'in_progress') echo "selected"; ?>>Em Andamento</option>
-                <option value="completed" <?php if ($requestData['status'] == 'completed') echo "selected"; ?>>Concluído</option>
+                <option value="in_progress" <?php if ($pedidoData['status'] == 'in_progress') echo "selected"; ?>>Em Andamento</option>
+                <option value="completed" <?php if ($pedidoData['status'] == 'completed') echo "selected"; ?>>Concluído</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Atualizar Status</button>
@@ -147,14 +147,14 @@ $allPartsResult = $conn->query($sqlAllParts);
     <?php if (isset($warning_part)) echo "<div class='alert alert-warning'>$warning_part</div>"; ?>
     <form method="post" action="diagnostico.php">
         <input type="hidden" name="action" value="add_part">
-        <input type="hidden" name="request_id" value="<?php echo $request_id; ?>">
+        <input type="hidden" name="pedido_id" value="<?php echo $pedido_id; ?>">
         <div class="form-group">
             <label for="part_id">Selecione a Peça</label>
             <select name="part_id" id="part_id" class="form-control" required>
                 <?php
                 if ($allPartsResult && $allPartsResult->num_rows > 0) {
                     while ($part = $allPartsResult->fetch_assoc()) {
-                        echo "<option value='{$part['id']}'>".htmlspecialchars($part['component'])." (Disponível: {$part['quantity']})</option>";
+                        echo "<option value='{$part['id']}'>".htmlspecialchars($part['componente'])." (Disponível: {$part['quantidade']})</option>";
                     }
                 } else {
                     echo "<option value=''>Nenhuma peça encontrada</option>";
@@ -183,9 +183,9 @@ $allPartsResult = $conn->query($sqlAllParts);
                 </tr>";
         while ($rp = $partsResult->fetch_assoc()) {
             echo "<tr>
-                    <td>" . htmlspecialchars($rp['component']) . "</td>
-                    <td>{$rp['quantity_used']}</td>
-                    <td>{$rp['quantity_missing']}</td>
+                    <td>" . htmlspecialchars($rp['componente']) . "</td>
+                    <td>{$rp['quantidade_usada']}</td>
+                    <td>{$rp['quantidade_em_falta']}</td>
                   </tr>";
         }
         echo "</table>";
@@ -194,10 +194,10 @@ $allPartsResult = $conn->query($sqlAllParts);
     }
     ?>
     <form action="diagnostico_complete.php" method="post">
-        <input type="hidden" name="request_id" value="<?php echo $request_id; ?>">
+        <input type="hidden" name="pedido_id" value="<?php echo $pedido_id; ?>">
         <button type="submit" class="btn btn-success">Concluído</button>
     </form>
-    <a href="technician_dashboard.php" class="btn btn-secondary mt-3">Voltar ao Dashboard</a>
+    <a href="tecnico_dashboard.php" class="btn btn-secondary mt-3">Voltar ao Dashboard</a>
 </div>
 </body>
 </html>

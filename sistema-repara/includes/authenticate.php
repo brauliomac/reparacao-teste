@@ -14,7 +14,7 @@ if(isset($_POST['username']) && isset($_POST['password'])){
         // Para produção, use funções de hash para senha (ex.: password_verify)
         if($user['password'] == $password){
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['role'] = $user['role'];
+            $_SESSION['papel'] = $user['papel'];
             $_SESSION['name'] = $user['name'];
 
             header("Location: dashboard.php");
