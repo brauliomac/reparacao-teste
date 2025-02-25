@@ -9,6 +9,7 @@ include '../../db/db.php';
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <link rel="stylesheet" href="../../style/style.css">
     <meta charset="UTF-8">
     <title>Dashboard do Funcionário</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
