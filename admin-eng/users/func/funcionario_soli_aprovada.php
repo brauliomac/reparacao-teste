@@ -1,23 +1,10 @@
 <?php
 session_start();
-// Apenas usuários com o perfil "funcionario" (ou outro, conforme sua política) podem acessar o relatório detalhado.
-if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario') {
+if(!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario'){
     header("Location: ../../login.php");
     exit;
 }
 include '../../db/db.php';
-
-// Consulta que retorna os dados da solicitação com os nomes do cliente e do técnico (se atribuído)
-$sql = "SELECT r.*, 
-               cliente.name AS cliente_name, 
-               tecnico.name AS tecnico_name
-        FROM pedidos r
-        JOIN users cliente ON r.cliente_id = cliente.id
-        LEFT JOIN users tecnico ON r.tecnico_id = tecnico.id
-        ORDER BY r.data_criacao ASC
-        LIMIT 30";
-
-$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -117,6 +104,7 @@ $result = $conn->query($sql);
                 </span>
                 <h4 class="text-section">Funções</h4>
               </li>
+
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#solic">
                   <i class="fas fa-layer-group"></i>
@@ -295,9 +283,9 @@ $result = $conn->query($sql);
           <div class="main-header-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
-              <a href="index.html" class="logo">
+              <a href="../../index.html" class="logo">
                 <img
-                  src="../../assets/img/icon.png"
+                  src="../../assets/img/kaiadmin/logo_light.svg"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"
@@ -323,32 +311,8 @@ $result = $conn->query($sql);
           >
             <div class="container-fluid">
              
+
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                <li
-                  class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none"
-                >
-                  <a
-                    class="nav-link dropdown-toggle"
-                    data-bs-toggle="dropdown"
-                    href="#"
-                    role="button"
-                    aria-expanded="false"
-                    aria-haspopup="true"
-                  >
-                    <i class="fa fa-search"></i>
-                  </a>
-                  <ul class="dropdown-menu dropdown-search animated fadeIn">
-                    <form class="navbar-left navbar-form nav-search">
-                      <div class="input-group">
-                        <input
-                          type="text"
-                          placeholder="Search ..."
-                          class="form-control"
-                        />
-                      </div>
-                    </form>
-                  </ul>
-                </li>              
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
@@ -365,18 +329,16 @@ $result = $conn->query($sql);
                       />
                     </div>
                     <span class="profile-username">
-                      <span class="op-7">Ola, </span>
-                      <span class="fw-bold"><?php echo $_SESSION['name']; ?></span>
+                      <span class="op-7">Ola,</span>
+                      <span class="fw-bold"> <?php echo $_SESSION['name']; ?> </span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
                     <div class="dropdown-user-scroll scrollbar-outer">
+                      
                       <li>
-                          <a href="funcionario_editar_perfil.php" class="dropdown-item" >  Perfil</a>
-                      </li>
-                      <li>
-                        <div class="dropdown-divider"></div>
-                        <a  href="../../logout.php" class="dropdown-item">Sair</a>
+                        <a class="dropdown-item" href="cliente_editar_perfil.php">Perfil</a>
+                        <a class="dropdown-item" href="../../logout.php">Sair</a>
                       </li>
                     </div>
                   </ul>
@@ -389,62 +351,66 @@ $result = $conn->query($sql);
 
         <div class="container">
           <div class="page-inner">
-            
-                        
-          <div class="row">
+                   
+            <div class="row">
               <div class="col-md-12">
                 <div class="card">
                   <div class="card-header">
-                    <div class="card-title"> Relatório Detalhado</div>
+                    <div class="card-title">Solicitações Aprovadas </div>
                   </div>
                   <div class="card-body">
                     <div class="chart-container">
-                        <table class="table table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>cliente</th>
-                                    <th>Técnico</th>
-                                    <th>Descrição</th>
-                                    <th>Status</th>
-                                    <th>Prioridade</th>
-                                    <th>Data de Criação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php if ($result->num_rows > 0): ?>
-                                <?php while ($row = $result->fetch_assoc()): ?>
-                                    <tr>
-                                        <td><?php echo $row['id']; ?></td>
-                                        <td><?php echo htmlspecialchars($row['cliente_name']); ?></td>
-                                        <td><?php echo ($row['tecnico_name'] != NULL ? htmlspecialchars($row['tecnico_name']) : 'Não atribuído'); ?></td>
-                                        <td><?php echo htmlspecialchars($row['descricao']); ?></td>
-                                        <td><?php echo $row['status']; ?></td>
-                                        <td><?php echo $row['prioridade']; ?></td>
-                                        <td><?php echo $row['data_criacao']; ?></td>
-                                    </tr>
-                                <?php endwhile; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="7">Nenhuma solicitação encontrada.</td>
-                                </tr>
-                            <?php endif; ?>
-                            </tbody>
-                        </table>
+                      
+                        <?php
+                            //$sql = "SELECT r.*, u.name AS cliente_name FROM pedidos r JOIN users u ON r.cliente_id = u.id WHERE r.status = 'pendente' ORDER BY r.data_criacao ASC";
+                            // SOLICITACAO APROVADA ESTA A FUNIONAR  COMO ATRIBUIDO NA BASDE DE DADOS
+                            // UTILIZAR ATRIBUIDO PARA SOLICITACOES APROVADAS
+                            $sql = "SELECT r.*, u.name AS cliente_name 
+                                FROM pedidos r 
+                                JOIN users u ON r.cliente_id = u.id 
+                                WHERE r.status = 'atribuido' 
+                                ORDER BY FIELD(r.prioridade, 'alta', 'media', 'baixa'), r.data_criacao ASC";
+
+                            $result = $conn->query($sql);
+                            if($result->num_rows > 0){
+                                echo '<table class="table table-hover">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>cliente</th>
+                                            <th>Descrição</th>
+                                            <th>Prioridade</th>
+                                            <th>Status</th>
+                                            <th>Data</th>
+                                        </tr>';
+                                while($row = $result->fetch_assoc()){
+                                    echo "<tr>
+                                            <td>{$row['id']}</td>
+                                            <td>{$row['cliente_name']}</td>
+                                            <td>{$row['descricao']}</td>
+                                            <td>{$row['prioridade']}</td>
+                                            <td>{$row['status']}</td>
+                                            <td>{$row['data_criacao']}</td>
+                                        </tr>";
+                                }
+                                echo '</table>';
+                            } else {
+                                echo "<p>Nenhuma solicitação pendente.</p>";
+                            }
+                        ?>
+
                     </div>
                   </div>
                 </div>
               </div>
               
             </div>
-            
           </div>
         </div>
 
         <footer class="footer">
           <div class="container-fluid d-flex justify-content-between">
             
-            <div class="copyright">
+            <div class="copyright ">
               <p>System ReparAqui @ 2025</p>
             </div>
           </div>

@@ -151,6 +151,33 @@ $funcionario_id = $result->fetch_assoc();
                 <h4 class="text-section">Funções</h4>
               </li>
               <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#solic">
+                  <i class="fas fa-layer-group"></i>
+                  <p>Solicitações</p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse" id="solic">
+                  <ul class="nav nav-collapse">
+                    
+                    <li>
+                      <a href="funcionario_soli_pendente.php">
+                        <span class="sub-item">Pendentes</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="funcionario_soli_aprovada.php">
+                        <span class="sub-item">Em Andamento</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="funcionario_soli_finalizada.php">
+                        <span class="sub-item">Finalizadas</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
                   <i class="fas fa-layer-group"></i>
                   <p>Gerir Clientes</p>
