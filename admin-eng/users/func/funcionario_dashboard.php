@@ -51,7 +51,7 @@ include '../../db/db.php';
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="index.html" class="logo">
+            <a href="funcionario_dashboard.php" class="logo">
               <img
                 src="../../assets/img/icon.png"
                 alt="navbar brand"
@@ -91,7 +91,7 @@ include '../../db/db.php';
                 <div class="collapse" id="dashboard">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="../demo1/index.html">
+                      <a href="funcionario_dashboard.php">
                         <span class="sub-item">Dashboard</span>
                       </a>
                     </li>
@@ -119,7 +119,7 @@ include '../../db/db.php';
                       </a>
                     </li>
                     <li>
-                      <a href="components/gridsystem.html">
+                      <a href="funcionario_ver_clientes.php">
                         <span class="sub-item">Ver Clientes</span>
                       </a>
                     </li>
@@ -135,12 +135,12 @@ include '../../db/db.php';
                 <div class="collapse" id="sidebarLayouts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="sidebar-style-2.html">
+                      <a href="funcionario_add_tecnico.php">
                         <span class="sub-item">Adicionar Tecnico</span>
                       </a>
                     </li>
                     <li>
-                      <a href="icon-menu.html">
+                      <a href="funcionario_ver_tecnicos.php">
                         <span class="sub-item">Ver Tecnicos</span>
                       </a>
                     </li>
@@ -158,13 +158,13 @@ include '../../db/db.php';
                 <div class="collapse" id="forms">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="forms/forms.html">
+                      <a href="funcionario_add_funcionario.php">
                         <span class="sub-item"> Adicionar Funcionario</span>
                       </a>
                     </li>
 
                     <li>
-                      <a href="forms/forms.html">
+                      <a href="funcionario_ver_funcionario.php">
                         <span class="sub-item"> Ver Funcionarios</span>
                       </a>
                     </li>
@@ -180,7 +180,7 @@ include '../../db/db.php';
                 <div class="collapse" id="tables">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="tables/tables.html">
+                      <a href="registo.php">
                         <span class="sub-item">Ver Estoque</span>
                       </a>
                     </li>
@@ -197,7 +197,7 @@ include '../../db/db.php';
                 <div class="collapse" id="maps">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="maps/googlemaps.html">
+                      <a href="pedidos_compra.php">
                         <span class="sub-item">Lista de Compras</span>
                       </a>
                     </li>
@@ -214,12 +214,12 @@ include '../../db/db.php';
                 <div class="collapse" id="charts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="charts/charts.html">
+                      <a href="relatorio_detalhado.php">
                         <span class="sub-item">Relatorio Detalhado</span>
                       </a>
                     </li>
                     <li>
-                      <a href="charts/sparkline.html">
+                      <a href="tecnico_performance.php">
                         <span class="sub-item">Desempnho dos Tecnicos</span>
                       </a>
                     </li>
@@ -332,7 +332,7 @@ include '../../db/db.php';
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
                     <div class="dropdown-user-scroll scrollbar-outer">
                       <li>
-                          <a href="#" class="dropdown-item" >  Perfil</a>
+                          <a href="funcionario_editar_perfil.php" class="dropdown-item" >  Perfil</a>
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>

@@ -1,13 +1,56 @@
 <?php
 session_start();
-if(!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario'){
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Verifica se o usuário está logado e se é um cliente
+if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario') {
     header("Location: ../../login.php");
     exit;
 }
+
 include '../../db/db.php';
 
-$sql = "SELECT * FROM registo ORDER BY componente DESC";
+$error = "";
+$success = "";
+$funcionario_id = $_SESSION['user_id'];
+
+// Processa o formulário quando for submetido
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['name'], $_POST['username'])) {
+        $name = $conn->real_escape_string(trim($_POST['name']));
+        $username = $conn->real_escape_string(trim($_POST['username']));
+        
+        if (empty($name) || empty($username)) {
+            $error = "Preencha todos os campos obrigatórios.";
+        } else {
+            // Se uma nova senha for informada, atualiza-a; caso contrário, mantém a senha atual
+            if (!empty($_POST['password'])) {
+                $password = $_POST['password'];
+                $sql = "UPDATE users SET name='$name', username='$username', password='$password' WHERE id=$funcionario_id
+                 AND papel='funcionario'";
+            } else {
+                $sql = "UPDATE users SET name='$name', username='$username' WHERE id=$funcionario_id AND papel='funcionario'";
+            }
+            if ($conn->query($sql) === TRUE) {
+                $success = "Dados atualizados com sucesso.";
+                // Atualiza os dados na sessão, se necessário
+                $_SESSION['name'] = $name;
+            } else {
+                $error = "Erro ao atualizar os dados: " . $conn->error;
+            }
+        }
+    } else {
+        $error = "Dados inválidos.";
+    }
+}
+// Busca os dados atuais do cliente para preencher o formulário
+$sql = "SELECT * FROM users WHERE id = $funcionario_id AND papel='funcionario'";
 $result = $conn->query($sql);
+if (!$result || $result->num_rows != 1) {
+    die("Funcionario não encontrado.");
+}
+$funcionario_id = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -258,9 +301,9 @@ $result = $conn->query($sql);
           <div class="main-header-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
-              <a href="index.html" class="logo">
+              <a href="../../index.html" class="logo">
                 <img
-                  src="../../assets/img/icon.png"
+                  src="../../assets/img/kaiadmin/logo_light.svg"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"
@@ -286,32 +329,8 @@ $result = $conn->query($sql);
           >
             <div class="container-fluid">
              
+
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                <li
-                  class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none"
-                >
-                  <a
-                    class="nav-link dropdown-toggle"
-                    data-bs-toggle="dropdown"
-                    href="#"
-                    role="button"
-                    aria-expanded="false"
-                    aria-haspopup="true"
-                  >
-                    <i class="fa fa-search"></i>
-                  </a>
-                  <ul class="dropdown-menu dropdown-search animated fadeIn">
-                    <form class="navbar-left navbar-form nav-search">
-                      <div class="input-group">
-                        <input
-                          type="text"
-                          placeholder="Search ..."
-                          class="form-control"
-                        />
-                      </div>
-                    </form>
-                  </ul>
-                </li>              
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
@@ -328,18 +347,16 @@ $result = $conn->query($sql);
                       />
                     </div>
                     <span class="profile-username">
-                      <span class="op-7">Ola, </span>
-                      <span class="fw-bold"><?php echo $_SESSION['name']; ?></span>
+                      <span class="op-7">Ola,</span>
+                      <span class="fw-bold"> <?php echo $_SESSION['name']; ?> </span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
                     <div class="dropdown-user-scroll scrollbar-outer">
+                      
                       <li>
-                          <a href="funcionario_editar_perfil.php" class="dropdown-item" >  Perfil</a>
-                      </li>
-                      <li>
-                        <div class="dropdown-divider"></div>
-                        <a  href="../../logout.php" class="dropdown-item">Sair</a>
+                        <a class="dropdown-item" href="cliente_editar_perfil.php">Perfil</a>
+                        <a class="dropdown-item" href="../../logout.php">Sair</a>
                       </li>
                     </div>
                   </ul>
@@ -352,55 +369,51 @@ $result = $conn->query($sql);
 
         <div class="container">
           <div class="page-inner">
-            
-                        
-          <div class="row">
+                   
+            <div class="row">
               <div class="col-md-12">
                 <div class="card">
                   <div class="card-header">
-                    <div class="card-title"> Estoque de Peças</div>
+                    <div class="card-title">Actualizar Dados Pessoais </div>
                   </div>
                   <div class="card-body">
                     <div class="chart-container">
-                        <table class="table table-hover">
-                            <tr>
-                                <th>ID</th>
-                                <th>Componente</th>
-                                <th>Quantidade</th>
-                                <th>Ação</th>
-                            </tr>
-                            <?php
-                            if($result->num_rows > 0){
-                                while($row = $result->fetch_assoc()){
-                                    echo "<tr>
-                                        <td>{$row['id']}</td>
-                                        <td>{$row['componente']}</td>
-                                        <td>{$row['quantidade']}</td>
-                                        <td>
-                                            <a href='editar_registo.php?id={$row['id']}' class='btn btn-sm btn-primary'>Editar</a>
-                                            <a href='apagar_registo.php?id={$row['id']}' class='btn btn-sm btn-danger'>Apagar</a>
-                                            </td>
-                                        </tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='4'>Nenhum componente cadastrado.</td></tr>";
-                            }
-                            ?>
-                        </table>
+                      
+                      <?php if ($error != ""): ?>
+                          <div class="alert alert-danger"><?php echo $error; ?></div>
+                      <?php endif; ?>
+                      <?php if ($success != ""): ?>
+                          <div class="alert alert-success"><?php echo $success; ?></div>
+                      <?php endif; ?>
+                      <form method="post" action="funcionario_editar_perfil.php">
+                          <div class="form-group">
+                              <label for="name">Nome Completo:</label>
+                              <input type="text" name="name" id="name" class="form-control" required value="<?php echo htmlspecialchars($funcionario_id['name']); ?>">
+                          </div>
+                          <div class="form-group">
+                              <label for="username">Usuário:</label>
+                              <input type="text" name="username" id="username" class="form-control" required value="<?php echo htmlspecialchars($funcionario_id['username']); ?>">
+                          </div>
+                          <div class="form-group">
+                              <label for="password">Senha (deixe em branco para manter a atual):</label>
+                              <input type="password" name="password" id="password" class="form-control">
+                          </div>
+                          <button type="submit" class="btn btn-primary">Atualizar</button>
+                      </form>
+
                     </div>
                   </div>
                 </div>
               </div>
               
             </div>
-            
           </div>
         </div>
 
         <footer class="footer">
           <div class="container-fluid d-flex justify-content-between">
             
-            <div class="copyright">
+            <div class="copyright ">
               <p>System ReparAqui @ 2025</p>
             </div>
           </div>

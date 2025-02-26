@@ -1,13 +1,35 @@
 <?php
 session_start();
-if(!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario'){
+if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario') {
     header("Location: ../../login.php");
     exit;
 }
 include '../../db/db.php';
 
-$sql = "SELECT * FROM registo ORDER BY componente DESC";
-$result = $conn->query($sql);
+if (isset($_GET['id'])) {
+    $user_id = intval($_GET['id']);
+} elseif (isset($_POST['id'])) {
+    $user_id = intval($_POST['id']);
+} else {
+    die("ID do usuário não informado.");
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $sql = "DELETE FROM users WHERE id = $user_id";
+    if ($conn->query($sql)) {
+        header("Location: funcionario_ver_funcionario.php");
+        exit;
+    } else {
+        $error = "Erro ao remover usuário: " . $conn->error;
+    }
+} else {
+    $sql = "SELECT * FROM users WHERE id = $user_id";
+    $result = $conn->query($sql);
+    if (!$result || $result->num_rows != 1) {
+        die("Usuário não encontrado.");
+    }
+    $userData = $result->fetch_assoc();
+}
 ?>
 
 <!DOCTYPE html>
@@ -358,35 +380,17 @@ $result = $conn->query($sql);
               <div class="col-md-12">
                 <div class="card">
                   <div class="card-header">
-                    <div class="card-title"> Estoque de Peças</div>
+                    <div class="card-title"> Remover Funcionario</div>
                   </div>
                   <div class="card-body">
                     <div class="chart-container">
-                        <table class="table table-hover">
-                            <tr>
-                                <th>ID</th>
-                                <th>Componente</th>
-                                <th>Quantidade</th>
-                                <th>Ação</th>
-                            </tr>
-                            <?php
-                            if($result->num_rows > 0){
-                                while($row = $result->fetch_assoc()){
-                                    echo "<tr>
-                                        <td>{$row['id']}</td>
-                                        <td>{$row['componente']}</td>
-                                        <td>{$row['quantidade']}</td>
-                                        <td>
-                                            <a href='editar_registo.php?id={$row['id']}' class='btn btn-sm btn-primary'>Editar</a>
-                                            <a href='apagar_registo.php?id={$row['id']}' class='btn btn-sm btn-danger'>Apagar</a>
-                                            </td>
-                                        </tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='4'>Nenhum componente cadastrado.</td></tr>";
-                            }
-                            ?>
-                        </table>
+                        <?php if (isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
+                        <p>Tem certeza que deseja remover o user <strong><?php echo htmlspecialchars($userData['name']); ?></strong> (<?php echo htmlspecialchars($userData['papel']); ?>)?</p>
+                        <form method="post" action="funcionario_apagar_funcionario.php">
+                            <input type="hidden" name="id" value="<?php echo $userData['id']; ?>">
+                            <button type="submit" class="btn btn-danger">Sim, remover</button>
+                            <a href="funcionario_ver_funcionario.php" class="btn btn-secondary">Cancelar</a>
+                        </form>
                     </div>
                   </div>
                 </div>

@@ -1,10 +1,41 @@
 <?php
 session_start();
-if(!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario'){
+if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario') {
     header("Location: ../../login.php");
     exit;
 }
 include '../../db/db.php';
+
+$error = "";
+$success = "";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['username'], $_POST['password'], $_POST['name'], $_POST['papel'])) {
+        $username = $conn->real_escape_string(trim($_POST['username']));
+        $password = $_POST['password'];
+        $name = $conn->real_escape_string(trim($_POST['name']));
+        $papel = $conn->real_escape_string(trim($_POST['papel']));
+        
+        // Permitir apenas as funções cliente e tecnico
+        $allowed_roles = array('cliente', 'tecnico');
+        if (!in_array($papel, $allowed_roles)) {
+            $error = "Função inválida.";
+        } elseif (empty($username) || empty($password) || empty($name)) {
+            $error = "Preencha todos os campos.";
+        } else {
+           // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $password = $_POST['password'];
+            $sql = "INSERT INTO users (username, password, papel, name) VALUES ('$username', '$password', '$papel', '$name')";
+            if ($conn->query($sql)) {
+                $success = "Usuário adicionado com sucesso.";
+            } else {
+                $error = "Erro: " . $conn->error;
+            }
+        }
+    } else {
+        $error = "Dados inválidos.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +82,7 @@ include '../../db/db.php';
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="index.html" class="logo">
+            <a href="funcionario_dashboard.php" class="logo">
               <img
                 src="../../assets/img/icon.png"
                 alt="navbar brand"
@@ -91,7 +122,7 @@ include '../../db/db.php';
                 <div class="collapse" id="dashboard">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="../demo1/index.html">
+                      <a href="funcionario_dashboard.php">
                         <span class="sub-item">Dashboard</span>
                       </a>
                     </li>
@@ -114,12 +145,12 @@ include '../../db/db.php';
                   <ul class="nav nav-collapse">
                     
                     <li>
-                      <a href="">
+                      <a href="funcionario_add_cliente.php">
                         <span class="sub-item">Adicionar Cliente</span>
                       </a>
                     </li>
                     <li>
-                      <a href="components/gridsystem.html">
+                      <a href="funcionario_ver_clientes.php">
                         <span class="sub-item">Ver Clientes</span>
                       </a>
                     </li>
@@ -135,12 +166,12 @@ include '../../db/db.php';
                 <div class="collapse" id="sidebarLayouts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="sidebar-style-2.html">
+                      <a href="funcionario_add_tecnico.php">
                         <span class="sub-item">Adicionar Tecnico</span>
                       </a>
                     </li>
                     <li>
-                      <a href="icon-menu.html">
+                      <a href="funcionario_ver_tecnicos.php">
                         <span class="sub-item">Ver Tecnicos</span>
                       </a>
                     </li>
@@ -158,13 +189,13 @@ include '../../db/db.php';
                 <div class="collapse" id="forms">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="forms/forms.html">
+                      <a href="funcionario_add_funcionario.php">
                         <span class="sub-item"> Adicionar Funcionario</span>
                       </a>
                     </li>
 
                     <li>
-                      <a href="forms/forms.html">
+                      <a href="funcionario_ver_funcionario.php">
                         <span class="sub-item"> Ver Funcionarios</span>
                       </a>
                     </li>
@@ -180,7 +211,7 @@ include '../../db/db.php';
                 <div class="collapse" id="tables">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="tables/tables.html">
+                      <a href="registo.php">
                         <span class="sub-item">Ver Estoque</span>
                       </a>
                     </li>
@@ -197,7 +228,7 @@ include '../../db/db.php';
                 <div class="collapse" id="maps">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="maps/googlemaps.html">
+                      <a href="pedidos_compra.php">
                         <span class="sub-item">Lista de Compras</span>
                       </a>
                     </li>
@@ -214,13 +245,30 @@ include '../../db/db.php';
                 <div class="collapse" id="charts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="charts/charts.html">
+                      <a href="relatorio_detalhado.php">
                         <span class="sub-item">Relatorio Detalhado</span>
                       </a>
                     </li>
                     <li>
-                      <a href="charts/sparkline.html">
+                      <a href="tecnico_performance.php">
                         <span class="sub-item">Desempnho dos Tecnicos</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#sair">
+                  <i class="far fa-chart-bar"></i>
+                  <p>Sair</p>
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse" id="sair">
+                  <ul class="nav nav-collapse">
+                    <li>
+                      <a href="../../logout.php">
+                        <span class="sub-item">Sair</span>
                       </a>
                     </li>
                   </ul>
@@ -233,438 +281,158 @@ include '../../db/db.php';
       </div>
       <!-- End Sidebar -->
 
-      <div class="container">
-          <div class="page-inner">
-            <div class="page-header">
-              <h3 class="fw-bold mb-3">Buttons</h3>
-              <ul class="breadcrumbs mb-3">
-                <li class="nav-home">
-                  <a href="#">
-                    <i class="icon-home"></i>
+      <div class="main-panel">
+        <div class="main-header">
+          <div class="main-header-logo">
+            <!-- Logo Header -->
+            <div class="logo-header" data-background-color="dark">
+              <a href="index.html" class="logo">
+                <img
+                  src="../../assets/img/icon.png"
+                  alt="navbar brand"
+                  class="navbar-brand"
+                  height="20"
+                />
+              </a>
+              <div class="nav-toggle">
+                <button class="btn btn-toggle toggle-sidebar">
+                  <i class="gg-menu-right"></i>
+                </button>
+                <button class="btn btn-toggle sidenav-toggler">
+                  <i class="gg-menu-left"></i>
+                </button>
+              </div>
+              <button class="topbar-toggler more">
+                <i class="gg-more-vertical-alt"></i>
+              </button>
+            </div>
+            <!-- End Logo Header -->
+          </div>
+          <!-- Navbar Header -->
+          <nav
+            class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
+          >
+            <div class="container-fluid">
+             
+              <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                <li
+                  class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none"
+                >
+                  <a
+                    class="nav-link dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    href="#"
+                    role="button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                  >
+                    <i class="fa fa-search"></i>
                   </a>
-                </li>
-                <li class="separator">
-                  <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                  <a href="#">Base</a>
-                </li>
-                <li class="separator">
-                  <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                  <a href="#">Buttons</a>
+                  <ul class="dropdown-menu dropdown-search animated fadeIn">
+                    <form class="navbar-left navbar-form nav-search">
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          placeholder="Search ..."
+                          class="form-control"
+                        />
+                      </div>
+                    </form>
+                  </ul>
+                </li>              
+
+                <li class="nav-item topbar-user dropdown hidden-caret">
+                  <a
+                    class="dropdown-toggle profile-pic"
+                    data-bs-toggle="dropdown"
+                    href="#"
+                    aria-expanded="false"
+                  >
+                    <div class="avatar-sm">
+                      <img
+                        src="../../assets/img/profile.jpg"
+                        alt="..."
+                        class="avatar-img rounded-circle"
+                      />
+                    </div>
+                    <span class="profile-username">
+                      <span class="op-7">Ola, </span>
+                      <span class="fw-bold"><?php echo $_SESSION['name']; ?></span>
+                    </span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-user animated fadeIn">
+                    <div class="dropdown-user-scroll scrollbar-outer">
+                      <li>
+                          <a href="funcionario_editar_perfil.php" class="dropdown-item" >  Perfil</a>
+                      </li>
+                      <li>
+                        <div class="dropdown-divider"></div>
+                        <a  href="../../logout.php" class="dropdown-item">Sair</a>
+                      </li>
+                    </div>
+                  </ul>
                 </li>
               </ul>
             </div>
-            <div class="row">
+          </nav>
+          <!-- End Navbar -->
+        </div>
+
+        <div class="container">
+          <div class="page-inner">
+            
+                        
+          <div class="row">
               <div class="col-md-12">
                 <div class="card">
                   <div class="card-header">
-                    <h4 class="card-title">Button Original</h4>
+                    <div class="card-title"> Adicionar Cliente</div>
                   </div>
                   <div class="card-body">
-                    <p class="demo">
-                      <button class="btn btn-black">Default</button>
-
-                      <button class="btn btn-primary">Primary</button>
-
-                      <button class="btn btn-secondary">Secondary</button>
-
-                      <button class="btn btn-info">Info</button>
-
-                      <button class="btn btn-success">Success</button>
-
-                      <button class="btn btn-warning">Warning</button>
-
-                      <button class="btn btn-danger">Danger</button>
-
-                      <button class="btn btn-link">Link</button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Button with Label</h4>
-                  </div>
-                  <div class="card-body">
-                    <p class="demo">
-                      <button class="btn btn-black">
-                        <span class="btn-label">
-                          <i class="fa fa-archive"></i>
-                        </span>
-                        Default
-                      </button>
-
-                      <button class="btn btn-primary">
-                        <span class="btn-label">
-                          <i class="fa fa-bookmark"></i>
-                        </span>
-                        Primary
-                      </button>
-
-                      <button class="btn btn-secondary">
-                        <span class="btn-label">
-                          <i class="fa fa-plus"></i>
-                        </span>
-                        Secondary
-                      </button>
-
-                      <button class="btn btn-info">
-                        <span class="btn-label">
-                          <i class="fa fa-info"></i>
-                        </span>
-                        Info
-                      </button>
-
-                      <button class="btn btn-success">
-                        <span class="btn-label">
-                          <i class="fa fa-check"></i>
-                        </span>
-                        Success
-                      </button>
-
-                      <button class="btn btn-warning">
-                        <span class="btn-label">
-                          <i class="fa fa-exclamation-circle"></i>
-                        </span>
-                        Warning
-                      </button>
-
-                      <button class="btn btn-danger">
-                        <span class="btn-label">
-                          <i class="fa fa-heart"></i>
-                        </span>
-                        Danger
-                      </button>
-
-                      <button class="btn btn-link">
-                        <span class="btn-label">
-                          <i class="fa fa-link"></i>
-                        </span>
-                        Link
-                      </button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Button Icon</h4>
-                  </div>
-                  <div class="card-body">
-                    <p class="demo">
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-round btn-black"
-                      >
-                        <i class="fa fa-align-left"></i>
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-round btn-primary"
-                      >
-                        <i class="fab fa-twitter"></i>
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-round btn-secondary"
-                      >
-                        <i class="fa fa-bookmark"></i>
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-round btn-info"
-                      >
-                        <i class="fa fa-info"></i>
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-round btn-success"
-                      >
-                        <i class="fa fa-check"></i>
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-round btn-warning"
-                      >
-                        <i class="fa fa-exclamation-circle"></i>
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-round btn-danger"
-                      >
-                        <i class="fa fa-heart"></i>
-                      </button>
-
-                      <button type="button" class="btn btn-icon btn-link">
-                        <i class="fa fa-link"></i>
-                      </button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Disabled Button</h4>
-                  </div>
-                  <div class="card-body">
-                    <p class="demo">
-                      <button class="btn btn-black" disabled="disabled">
-                        Default
-                      </button>
-
-                      <button class="btn btn-primary" disabled="disabled">
-                        Primary
-                      </button>
-
-                      <button class="btn btn-secondary" disabled="disabled">
-                        Secondary
-                      </button>
-
-                      <button class="btn btn-info" disabled="disabled">
-                        Info
-                      </button>
-
-                      <button class="btn btn-success" disabled="disabled">
-                        Success
-                      </button>
-
-                      <button class="btn btn-warning" disabled="disabled">
-                        Warning
-                      </button>
-
-                      <button class="btn btn-danger" disabled="disabled">
-                        Danger
-                      </button>
-
-                      <button class="btn btn-link" disabled>Link</button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Button Size</h4>
-                  </div>
-                  <div class="card-body">
-                    <p class="demo">
-                      <button class="btn btn-primary btn-lg">Large</button>
-
-                      <button class="btn btn-primary">Normal</button>
-
-                      <button class="btn btn-primary btn-sm">Small</button>
-
-                      <button class="btn btn-primary btn-xs">
-                        Extra Small
-                      </button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Button Type</h4>
-                  </div>
-                  <div class="card-body">
-                    <p class="demo">
-                      <button class="btn btn-primary">Normal</button>
-                      <button class="btn btn-primary btn-border">Border</button>
-
-                      <button class="btn btn-primary btn-round">Round</button>
-
-                      <button class="btn btn-primary btn-border btn-round">
-                        Round
-                      </button>
-
-                      <button class="btn btn-primary btn-link">Link</button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Bootstrap Dropdown</h4>
-                  </div>
-                  <div class="card-body">
-                    <div class="demo">
-                      <div class="btn-group dropdown">
-                        <button
-                          class="btn btn-primary dropdown-toggle"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                        >
-                          DropDown
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                          <li>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"
-                              >Something else here</a
-                            >
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="btn-group dropup">
-                        <button
-                          class="btn btn-info dropdown-toggle"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                        >
-                          DropUp
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                          <li>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"
-                              >Something else here</a
-                            >
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="btn-group dropend">
-                        <button
-                          type="button"
-                          class="btn btn-success btn-round dropdown-toggle"
-                          data-bs-toggle="dropdown"
-                          aria-haspopup="true"
-                          aria-expanded="false"
-                        >
-                          DropRight
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                          <li>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"
-                              >Something else here</a
-                            >
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="btn-group dropstart">
-                        <button
-                          type="button"
-                          class="btn btn-black btn-border dropdown-toggle"
-                          data-bs-toggle="dropdown"
-                          aria-haspopup="true"
-                          aria-expanded="false"
-                        >
-                          DropLeft
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                          <li>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"
-                              >Something else here</a
-                            >
-                          </li>
-                        </ul>
-                      </div>
+                    <div class="chart-container">
+                        <?php if ($error) echo "<div class='alert alert-danger'>$error</div>"; ?>
+                        <?php if ($success) echo "<div class='alert alert-success'>$success</div>"; ?>
+                        <form method="post" action="funcionario_add_cliente.php">
+                            <div class="form-group">
+                                <label for="name">Nome Completo</label>
+                                <input type="text" name="name" id="name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Usuário</label>
+                                <input type="text" name="username" id="username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Senha</label>
+                                <input type="password" name="password" id="password" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="papel">Função</label>
+                                <select name="papel" id="papel" class="form-control" required>
+                                    <option value="cliente">cliente</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary mx-3">Adicionar </button>
+                        </form>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Badge</h4>
-                  </div>
-                  <div class="card-body">
-                    <span class="badge badge-count">Count</span>
-                    <span class="badge badge-black">Default</span>
-                    <span class="badge badge-primary">Primary</span>
-                    <span class="badge badge-info">Info</span>
-                    <span class="badge badge-success">Success</span>
-                    <span class="badge badge-warning">Warning</span>
-                    <span class="badge badge-danger">Danger</span>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Nav Pills</h4>
-                  </div>
-                  <div class="card-body">
-                    <ul class="nav nav-pills nav-primary">
-                      <li class="nav-item">
-                        <a class="nav-link active" href="#">Active</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Disabled</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">Pagination</h4>
-                  </div>
-                  <div class="card-body">
-                    <div class="demo">
-                      <ul class="pagination pg-primary">
-                        <li class="page-item">
-                          <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="sr-only">Previous</span>
-                          </a>
-                        </li>
-                        <li class="page-item active">
-                          <a class="page-link" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            <span class="sr-only">Next</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
+            
           </div>
         </div>
+
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            
+            <div class="copyright">
+              <p>System ReparAqui @ 2025</p>
+            </div>
+          </div>
+          </div>
+        </footer>
+      </div>
     </div>
 
     <!--   Core JS Files   -->
