@@ -243,9 +243,15 @@ $result = $conn->query($sql);
                 </a>
                 <div class="collapse" id="charts">
                   <ul class="nav nav-collapse">
+                  <li>
+                      <a href="relatorio_simples.php">
+                        <span class="sub-item"> Simples</span>
+                      </a>
+                    </li>  
+                  <li>
                     <li>
                       <a href="relatorio_detalhado.php">
-                        <span class="sub-item">Relatorio Detalhado</span>
+                        <span class="sub-item"> Detalhado</span>
                       </a>
                     </li>
                     <li>
@@ -409,11 +415,14 @@ $result = $conn->query($sql);
                                             </td>
                                         </tr>";
                                 }
+
+                                
                             } else {
                                 echo "<tr><td colspan='4'>Nenhum componente cadastrado.</td></tr>";
                             }
                             ?>
                         </table>
+                        <a href="add_registo.php" class="btn btn-success mx-3">Adicionar Peça</a>
                     </div>
                   </div>
                 </div>

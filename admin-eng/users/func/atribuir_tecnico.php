@@ -258,9 +258,15 @@ $tech_result = $conn->query($sqlTech);
                 </a>
                 <div class="collapse" id="charts">
                   <ul class="nav nav-collapse">
+                  <<li>
+                      <a href="relatorio_simples.php">
+                        <span class="sub-item"> Simples</span>
+                      </a>
+                    </li>  
+                  <li>
                     <li>
                       <a href="relatorio_detalhado.php">
-                        <span class="sub-item">Relatorio Detalhado</span>
+                        <span class="sub-item"> Detalhado</span>
                       </a>
                     </li>
                     <li>
@@ -420,7 +426,7 @@ $tech_result = $conn->query($sqlTech);
                                     ?>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Atribuir</button>
+                            <button type="submit" class="btn btn-primary mx-3">Atribuir</button>
                         </form>
                     </div>
                   </div>

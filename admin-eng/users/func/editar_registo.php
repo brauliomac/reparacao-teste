@@ -285,9 +285,15 @@ $componentData = $result->fetch_assoc();
                 </a>
                 <div class="collapse" id="charts">
                   <ul class="nav nav-collapse">
+                  <<li>
+                      <a href="relatorio_simples.php">
+                        <span class="sub-item"> Simples</span>
+                      </a>
+                    </li>  
+                  <li>
                     <li>
                       <a href="relatorio_detalhado.php">
-                        <span class="sub-item">Relatorio Detalhado</span>
+                        <span class="sub-item"> Detalhado</span>
                       </a>
                     </li>
                     <li>
@@ -440,7 +446,7 @@ $componentData = $result->fetch_assoc();
                         <form method="post" action="editar_registo.php">
                             <input type="hidden" name="id" value="<?php echo $componentData['id']; ?>">
                             <div class="form-group">
-                                <label for="componente">Nome do Componente</label>
+                                <label for="componente">Nome da Peça</label>
                                 <input type="text" name="componente" id="componente" class="form-control" value="<?php echo htmlspecialchars($componentData['componente']); ?>" required>
                             </div>
                             <div class="form-group">

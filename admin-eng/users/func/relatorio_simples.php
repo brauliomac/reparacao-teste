@@ -5,6 +5,10 @@ if(!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario'){
     exit;
 }
 include '../../db/db.php';
+
+// Exemplo: contagem de solicitações por status
+$sql = "SELECT status, COUNT(*) as total FROM pedidos GROUP BY status";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -104,7 +108,6 @@ include '../../db/db.php';
                 </span>
                 <h4 class="text-section">Funções</h4>
               </li>
-
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#solic">
                   <i class="fas fa-layer-group"></i>
@@ -289,9 +292,9 @@ include '../../db/db.php';
           <div class="main-header-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
-              <a href="../../index.html" class="logo">
+              <a href="index.html" class="logo">
                 <img
-                  src="../../assets/img/kaiadmin/logo_light.svg"
+                  src="../../assets/img/icon.png"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"
@@ -317,8 +320,32 @@ include '../../db/db.php';
           >
             <div class="container-fluid">
              
-
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                <li
+                  class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none"
+                >
+                  <a
+                    class="nav-link dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    href="#"
+                    role="button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                  >
+                    <i class="fa fa-search"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-search animated fadeIn">
+                    <form class="navbar-left navbar-form nav-search">
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          placeholder="Search ..."
+                          class="form-control"
+                        />
+                      </div>
+                    </form>
+                  </ul>
+                </li>              
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
@@ -335,16 +362,18 @@ include '../../db/db.php';
                       />
                     </div>
                     <span class="profile-username">
-                      <span class="op-7">Ola,</span>
-                      <span class="fw-bold"> <?php echo $_SESSION['name']; ?> </span>
+                      <span class="op-7">Ola, </span>
+                      <span class="fw-bold"><?php echo $_SESSION['name']; ?></span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
                     <div class="dropdown-user-scroll scrollbar-outer">
-                      
                       <li>
-                        <a class="dropdown-item" href="cliente_editar_perfil.php">Perfil</a>
-                        <a class="dropdown-item" href="../../logout.php">Sair</a>
+                          <a href="funcionario_editar_perfil.php" class="dropdown-item" >  Perfil</a>
+                      </li>
+                      <li>
+                        <div class="dropdown-divider"></div>
+                        <a  href="../../logout.php" class="dropdown-item">Sair</a>
                       </li>
                     </div>
                   </ul>
@@ -357,64 +386,48 @@ include '../../db/db.php';
 
         <div class="container">
           <div class="page-inner">
-                   
-            <div class="row">
+            
+                        
+          <div class="row">
               <div class="col-md-12">
                 <div class="card">
                   <div class="card-header">
-                    <div class="card-title">Solicitações Finalizadas </div>
+                    <div class="card-title"> Relatório Simples</div>
                   </div>
                   <div class="card-body">
                     <div class="chart-container">
-                      
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Status</th>
+                            <th>Total</th>
+                        </tr>
                         <?php
-                            //$sql = "SELECT r.*, u.name AS cliente_name FROM pedidos r JOIN users u ON r.cliente_id = u.id WHERE r.status = 'pendente' ORDER BY r.data_criacao ASC";
-                            // SOLICITACAO APROVADA ESTA A FUNIONAR  COMO ATRIBUIDO NA BASDE DE DADOS
-                            // UTILIZAR ATRIBUIDO PARA SOLICITACOES APROVADAS
-                            $sql = "SELECT r.*, u.name AS cliente_name 
-                                FROM pedidos r 
-                                JOIN users u ON r.cliente_id = u.id 
-                                WHERE r.status = 'montado' 
-                                ORDER BY FIELD(r.prioridade, 'alta', 'media', 'baixa'), r.data_criacao ASC";
-
-                            $result = $conn->query($sql);
-                            if($result->num_rows > 0){
-                                echo '<table class="table table-hover">
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>cliente</th>
-                                            <th>Descrição</th>
-                                            <th>Status</th>
-                                            <th>Data</th>
-                                        </tr>';
-                                while($row = $result->fetch_assoc()){
-                                    echo "<tr>
-                                            <td>{$row['id']}</td>
-                                            <td>{$row['cliente_name']}</td>
-                                            <td>{$row['descricao']}</td>
-                                            <td>{$row['status']}</td>
-                                            <td>{$row['data_criacao']}</td>
-                                        </tr>";
-                                }
-                                echo '</table>';
-                            } else {
-                                echo "<p>Nenhuma solicitação pendente.</p>";
+                        if($result->num_rows > 0){
+                            while($row = $result->fetch_assoc()){
+                                echo "<tr>
+                                        <td>{$row['status']}</td>
+                                        <td>{$row['total']}</td>
+                                    </tr>";
                             }
+                        } else {
+                            echo "<tr><td colspan='2'>Nenhum dado encontrado.</td></tr>";
+                        }
                         ?>
-
+                    </table>
                     </div>
                   </div>
                 </div>
               </div>
               
             </div>
+            
           </div>
         </div>
 
         <footer class="footer">
           <div class="container-fluid d-flex justify-content-between">
             
-            <div class="copyright ">
+            <div class="copyright">
               <p>System ReparAqui @ 2025</p>
             </div>
           </div>

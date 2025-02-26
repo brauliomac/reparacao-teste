@@ -274,32 +274,32 @@ $tecnico_id = $_SESSION['user_id'];
                     <div class="chart-container">
                       
                     <?php
-                        $sql = "SELECT r.*, u.name AS cliente_name FROM pedidos r JOIN users u ON r.cliente_id = u.id WHERE r.tecnico_id = $tecnico_id AND r.status = 'pendente' ORDER BY r.data_criacao ASC";
-                        $result = $conn->query($sql);
-                        if($result->num_rows > 0){
-                            echo '<table class="table table-hover">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>cliente</th>
-                                        <th>Descrição</th>
-                                        <th>Status</th>
-                                        <th>Ação</th>
-                                    </tr>';
-                            while($row = $result->fetch_assoc()){
-                                echo "<tr>
-                                        <td>{$row['id']}</td>
-                                        <td>{$row['cliente_name']}</td>
-                                        <td>{$row['descricao']}</td>
-                                        <td>{$row['status']}</td>
-                                        <td>
-                                            <a href='diagnostico.php?id={$row['id']}' class='btn btn-sm btn-success'>Diagnosticar</a>
-                                        </td>
+                      $sql = "SELECT r.*, u.name AS cliente_name FROM pedidos r JOIN users u ON r.cliente_id = u.id WHERE r.tecnico_id = $tecnico_id AND r.status = 'atribuido' ORDER BY r.data_criacao ASC";
+                      $result = $conn->query($sql);
+                      if($result->num_rows > 0){
+                          echo '<table class="table table-hover">
+                                  <tr>
+                                      <th>ID</th>
+                                      <th>cliente</th>
+                                      <th>Descrição</th>
+                                      <th>Status</th>
+                                      <th>Ação</th>
+                                  </tr>';
+                          while($row = $result->fetch_assoc()){
+                              echo "<tr>
+                                      <td>{$row['id']}</td>
+                                      <td>{$row['cliente_name']}</td>
+                                      <td>{$row['descricao']}</td>
+                                      <td>{$row['status']}</td>
+                                      <td>
+                                          <a href='diagnostico.php?id={$row['id']}' class='btn btn-sm btn-success'>Diagnostico</a>
+                                      </td>
                                     </tr>";
-                            }
-                            echo '</table>';
-                        } else {
-                            echo "<p>Nenhuma solicitação atribuída.</p>";
-                        }
+                          }
+                          echo '</table>';
+                      } else {
+                          echo "<p>Nenhuma solicitação atribuída.</p>";
+                      }
                     ?>
 
                     </div>

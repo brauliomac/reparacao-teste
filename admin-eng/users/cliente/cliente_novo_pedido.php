@@ -10,15 +10,16 @@ $error = "";
 $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['descricao'])) {
+    if (isset($_POST['descricao']) && isset($_POST['prioridade'])) {
         $descricao = $conn->real_escape_string(trim($_POST['descricao']));
+        $prioridade = $conn->real_escape_string($_POST['prioridade']);
         $cliente_id = $_SESSION['user_id'];
         
         if (empty($descricao)) {
             $error = "A descrição é obrigatória.";
         } else {
-            $sql = "INSERT INTO pedidos (cliente_id, descricao, status) VALUES ($cliente_id, '$descricao', 'pendente')";
-            if ($conn->query($sql) === TRUE) {
+          $sql = "INSERT INTO pedidos (cliente_id, descricao, prioridade, status) VALUES ($cliente_id, '$descricao', '$prioridade', 'pendente')";
+          if ($conn->query($sql) === TRUE) {
                 $success = "Solicitação registrada com sucesso.";
             } else {
                 $error = "Erro ao registrar solicitação: " . $conn->error;
@@ -29,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -241,6 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   </div>
                   <div class="card-body">
                     <div class="chart-container">
+
                       <?php if ($error != ""): ?>
                             <div class="alert alert-danger"><?php echo $error; ?></div>
                         <?php endif; ?>
@@ -252,7 +256,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <label for="descricao">Descrição da Solicitação:</label>
                                 <textarea name="descricao" id="descricao" class="form-control w-50" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Enviar Solicitação</button>
+
+                            <div class="form-group w-50">
+                              <label>Prioridade</label>
+                              <select name="prioridade" class="form-control" required>
+                                  <option value="baixa">Baixa</option>
+                                  <option value="media" selected>Média</option>
+                                  <option value="alta">Alta</option>
+                              </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary mx-3">Enviar Solicitação</button>
                         </form>
                     </div>
                   </div>

@@ -240,9 +240,15 @@ include '../../db/db.php';
                 </a>
                 <div class="collapse" id="charts">
                   <ul class="nav nav-collapse">
+                  <li>
+                      <a href="relatorio_simples.php">
+                        <span class="sub-item"> Simples</span>
+                      </a>
+                    </li>  
+                  <li>
                     <li>
                       <a href="relatorio_detalhado.php">
-                        <span class="sub-item">Relatorio Detalhado</span>
+                        <span class="sub-item"> Detalhado</span>
                       </a>
                     </li>
                     <li>
@@ -282,13 +288,9 @@ include '../../db/db.php';
           <div class="main-header-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
-              <a href="index.html" class="logo">
-                <img
-                  src="../../assets/img/icon.png"
-                  alt="navbar brand"
-                  class="navbar-brand"
-                  height="20"
-                />
+              <a href="" class="logo">
+              <i class="fas fa-user"></i>
+
               </a>
               <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
