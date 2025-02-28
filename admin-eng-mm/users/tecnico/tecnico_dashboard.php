@@ -6,6 +6,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'tecnico'){
 }
 include '../../db/db.php';
 $tecnico_id = $_SESSION['user_id'];
+
 ?>
 
 <!DOCTYPE html>
@@ -266,7 +267,7 @@ $tecnico_id = $_SESSION['user_id'];
                     <div class="row align-items-center">
                       <div class="col-icon">
                         <div
-                          class="icon-big text-center icon-primary bubble-shadow-small"
+                          class="icon-big text-center icon-secondary bubble-shadow-small"
                         >
                         <i class="fas fa-hourglass-half"></i>
                         </div>
@@ -274,34 +275,24 @@ $tecnico_id = $_SESSION['user_id'];
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
                           <p class="card-category">Solitações Pendentes</p>
-                          <h4 class="card-title">12</h4>
+                          <?php
+                            $sql = "SELECT COUNT(*) AS total FROM pedidos WHERE tecnico_id = ? AND status = 'atribuido'";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $tecnico_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $row = $result->fetch_assoc();
+
+                            $total = $row['total']; 
+                            echo "<h4 class='card-title'>".(int)$row['total']."</h4>";
+                          ?>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
-                  <div class="card-body">
-                    <div class="row align-items-center">
-                      <div class="col-icon">
-                        <div
-                          class="icon-big text-center icon-info bubble-shadow-small"
-                        >
-                        <i class="fas fa-check-circle"></i>
-                        </div>
-                      </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
-                        <div class="numbers">
-                          <p class="card-category">Solitações Finalizadas</p>
-                          <h4 class="card-title">07</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
               <div class="col-sm-6 col-md-3">
                 <div class="card card-stats card-round">
                   <div class="card-body">
@@ -316,7 +307,17 @@ $tecnico_id = $_SESSION['user_id'];
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
                           <p class="card-category">Montagens Pendentes</p>
-                          <h4 class="card-title">04</h4>
+                          <?php
+                            $sql = "SELECT COUNT(*) AS total FROM pedidos WHERE tecnico_id = ? AND status = 'diagnosticado'";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $tecnico_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $row = $result->fetch_assoc();
+
+                            $total = $row['total']; 
+                            echo "<h4 class='card-title'>".(int)$row['total']."</h4>";
+                          ?>
                         </div>
                       </div>
                     </div>
@@ -337,13 +338,25 @@ $tecnico_id = $_SESSION['user_id'];
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
                           <p class="card-category">Montagens Finalizadas</p>
-                          <h4 class="card-title">16</h4>
+                          <?php
+                            $sql = "SELECT COUNT(*) AS total FROM pedidos WHERE tecnico_id = ? AND status = 'montado'";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $tecnico_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $row = $result->fetch_assoc();
+
+                            $total = $row['total']; 
+                            echo "<h4 class='card-title'>".(int)$row['total']."</h4>";
+                          ?>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+
+             
             </div>
 
             <div class="row">
@@ -352,10 +365,10 @@ $tecnico_id = $_SESSION['user_id'];
                   <div class="card-header">
                     <div class="card-title">Meu Desenpenho </div>
                   </div>
-                  <div class="card-body">
-                    <div class="chart-container">
-                      <canvas id="barChart"></canvas>
-                    </div>
+                  <div class="card-body" style="height: 300px;">
+                    
+                    <canvas id="tecnicoChart1"></canvas>
+                  
                   </div>
                 </div>
               </div>
@@ -407,6 +420,68 @@ $tecnico_id = $_SESSION['user_id'];
 
     <!-- Kaiadmin JS -->
     <script src="../../assets/js/kaiadmin.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+   
+      <?php
+        $sql = "
+        SELECT 
+            (SELECT COUNT(*) 
+              FROM pedidos 
+              WHERE tecnico_id = ? 
+              AND (status != 'montado' OR status != 'rejeitado')) AS solicitacoes_recebidas, 
+            
+            (SELECT COUNT(*) 
+              FROM pedidos 
+              WHERE tecnico_id = ? 
+              AND status = 'montado') AS montagens_finalizadas;
+        ";
+    
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $tecnico_id, $tecnico_id); 
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+    
+        $solicitacoesRecebidas = $data['solicitacoes_recebidas'];
+        $montagensFinalizadas = $data['montagens_finalizadas'];
+      
+      ?>
+    var solicitacoesRecebidas = <?php echo $solicitacoesRecebidas; ?> ;  
+    var montagensTerminadas = <?php echo $montagensFinalizadas; ?>;
+    
+    var ctx = document.getElementById('tecnicoChart1').getContext('2d');
+    var tecnicoChart1 = new Chart(ctx, {
+      type: 'bar',  
+      data: {
+        labels: ['Solicitações Recebidas', 'Montagens Finalizadas'],  
+        datasets: [{
+          label: 'Total', 
+          data: [solicitacoesRecebidas, montagensTerminadas],  
+          backgroundColor: [
+            'rgb(54, 162, 235)', 
+            'rgb(75, 192, 192)' 
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)', 
+            'rgba(75, 192, 192, 1)'  
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,  
+        scales: {
+          y: {
+            beginAtZero: true  
+          }
+        }
+      }
+    });
+  </script>
 
   </body>
 </html>

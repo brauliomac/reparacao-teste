@@ -5,6 +5,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'cliente'){
   exit;
 }
 include '../../db/db.php';
+$cliente_id = $_SESSION['user_id'];
 ?>
 
 <!DOCTYPE html>
@@ -210,36 +211,120 @@ include '../../db/db.php';
         </div>
 
         <div class="container">
-          <div class="page-inner">            
-            <div class="row">
-              <div class="col-md-6">
-                <div class="card">
-                  <div class="card-header">
-                    <div class="card-title">Historico 1 </div>
-                  </div>
+          <div class="page-inner">  
+            
+          <div class="row">
+              <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
                   <div class="card-body">
-                    <div class="chart-container">
-                      <canvas id="barChart"></canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="card">
-                  <div class="card-header">
-                    <div class="card-title">Hitorico 2</div>
-                  </div>
-                  <div class="card-body">
-                    <div class="chart-container">
-                      <canvas
-                        id="doughnutChart"
-                        style="width: 50%; height: 50%"
-                      ></canvas>
+                    <div class="row align-items-center">
+                      <div class="col-icon">
+                        <div
+                          class="icon-big text-center icon-secondary bubble-shadow-small"
+                        >
+                        <i class="fas fa-hourglass-half"></i>
+                        </div>
+                      </div>
+                      <div class="col col-stats ms-3 ms-sm-0">
+                        <div class="numbers">
+                          <p class="card-category">Solitações Pendentes</p>
+                          <?php
+                            $sql = "SELECT COUNT(*) AS total FROM pedidos WHERE cliente_id = ? AND status = 'pendente'";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $cliente_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $row = $result->fetch_assoc();
+
+                            $total = $row['total']; 
+                            echo "<h4 class='card-title'>".(int)$row['total']."</h4>";
+                          ?>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
               
+              <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                  <div class="card-body">
+                    <div class="row align-items-center">
+                      <div class="col-icon">
+                        <div
+                          class="icon-big text-center icon-secondary bubble-shadow-small"
+                        >
+                        <i class="fas fa-times-circle"></i>
+                        </div>
+                      </div>
+                      <div class="col col-stats ms-3 ms-sm-0">
+                        <div class="numbers">
+                          <p class="card-category">Solicitações Rejeitadas</p>
+                          <?php
+                            $sql = "SELECT COUNT(*) AS total FROM pedidos WHERE cliente_id = ? AND status = 'rejeitado'";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $cliente_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $row = $result->fetch_assoc();
+
+                            $total = $row['total']; 
+                            echo "<h4 class='card-title'>".(int)$row['total']."</h4>";
+                          ?>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                  <div class="card-body">
+                    <div class="row align-items-center">
+                      <div class="col-icon">
+                        <div
+                          class="icon-big text-center icon-secondary bubble-shadow-small"
+                        >
+                        <i class="fas fa-hourglass-half"></i>
+                        </div>
+                      </div>
+                      <div class="col col-stats ms-3 ms-sm-0">
+                        <div class="numbers">
+                          <p class="card-category">Solicitações Feitas</p>
+                          <?php
+                            $sql = "SELECT COUNT(*) AS total FROM pedidos WHERE cliente_id = ? ";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $cliente_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $row = $result->fetch_assoc();
+
+                            $total = $row['total']; 
+                            echo "<h4 class='card-title'>".(int)$row['total']."</h4>";
+                          ?>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                         
+            </div>
+          
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="card-title">Solicitações Realizadas </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart-container">
+                      <canvas id="clienteChart1"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -288,6 +373,68 @@ include '../../db/db.php';
 
     <!-- Kaiadmin JS -->
     <script src="../../assets/js/kaiadmin.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+      <?php
+        $sql = "
+          SELECT 
+          (SELECT COUNT(*) 
+          FROM pedidos 
+          WHERE cliente_id = ?) AS solicitacoes_totais,
+          
+          (SELECT COUNT(*) 
+          FROM pedidos 
+          WHERE cliente_id = ? 
+          AND status = 'pendente') AS solicitacoes_pendentes;"
+        ;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $cliente_id, $cliente_id); 
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+
+        $solicitacoesTotais = $data['solicitacoes_totais'];
+        $solicitacoesPendentes = $data['solicitacoes_pendentes'];
+      
+      ?>
+    var solicitacoesRecebidas = <?php echo $solicitacoesTotais; ?> ;  
+    var montagensTerminadas = <?php echo $solicitacoesPendentes; ?>;
+
+    var ctx = document.getElementById('clienteChart1').getContext('2d');
+    var tecnicoChart1 = new Chart(ctx, {
+      type: 'bar',  
+      data: {
+        labels: ['Solicitações Feitas', 'Solicitações Pendentes'],  
+        datasets: [{
+          label: 'Total', 
+          data: [solicitacoesRecebidas, montagensTerminadas],  
+          backgroundColor: [
+            'rgb(54, 162, 235)', 
+            'rgb(75, 192, 192)' 
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)', 
+            'rgba(75, 192, 192, 1)'  
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,  
+        scales: {
+          y: {
+            beginAtZero: true  
+          }
+        }
+      }
+    });
+    </script>
+
 
   </body>
 </html>
