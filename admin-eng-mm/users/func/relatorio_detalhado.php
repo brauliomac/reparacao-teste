@@ -401,12 +401,14 @@ $result = $conn->query($sql);
                   </div>
                   <div class="card-body">
                     <div class="chart-container">
+
+                      
                         <table class="table table-hover table-striped">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>cliente</th>
-                                    <th>Técnico</th>
+                                    <th>Técnico Responsável</th>
                                     <th>Descrição</th>
                                     <th>Status</th>
                                     <th>Prioridade</th>
@@ -416,6 +418,7 @@ $result = $conn->query($sql);
                             <tbody>
                             <?php if ($result->num_rows > 0): ?>
                                 <?php while ($row = $result->fetch_assoc()): ?>
+
                                     <tr>
                                         <td><?php echo $row['id']; ?></td>
                                         <td><?php echo htmlspecialchars($row['cliente_name']); ?></td>

@@ -607,11 +607,11 @@ document.addEventListener('DOMContentLoaded', function() {
     $labels = [];
     $data = [];
     $colors = [
-        'pendente' => '#FF6384',
+        'pendente' => '#9966FF',
         'atribuido' => '#36A2EB',
         'diagnosticado' => '#FFCD56',
-        'montado' => '#4BC0C0',
-        'rejeitado' => '#9966FF'
+        'montado' => '#4BC0C0', 
+        'rejeitado' => '#FF6384'
     ];
     
     while($row = $result->fetch_assoc()) {
@@ -627,8 +627,8 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 data: <?= json_encode($data) ?>,
                 backgroundColor: [
-                    '#FF6384', '#36A2EB', '#FFCD56', 
-                    '#4BC0C0', '#9966FF'
+                    '#9966FF', '#36A2EB', '#FFCD56', 
+                    '#FF6384', '#4BC0C0'
                 ]
             }]
         },

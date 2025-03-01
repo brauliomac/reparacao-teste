@@ -24,6 +24,8 @@ if(isset($_POST['username']) && isset($_POST['password'])){
         }
     } else {
         echo "Usuário não encontrado.";
+        header("Location: ../login.php");
+        exit;
     }
 } else {
     echo "Preencha todos os campos.";

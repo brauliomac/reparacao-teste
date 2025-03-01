@@ -6,6 +6,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'funcionario') {
 }
 include '../../db/db.php';
 
+$funcionario_id = $_SESSION['user_id'];
+
 if (isset($_GET['id'])) {
     $user_id = intval($_GET['id']);
 } elseif (isset($_POST['id'])) {
@@ -14,7 +16,7 @@ if (isset($_GET['id'])) {
     die("ID do usuário não informado.");
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $funcionario_id != $user_id) {
     $sql = "DELETE FROM users WHERE id = $user_id";
     if ($conn->query($sql)) {
         header("Location: funcionario_ver_funcionario.php");
@@ -22,6 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $error = "Erro ao remover usuário: " . $conn->error;
     }
+} else if ($funcionario_id == $user_id) {
+    echo "Alert('Não é possivel o funcionario  remover a si mesmo')";
 } else {
     $sql = "SELECT * FROM users WHERE id = $user_id";
     $result = $conn->query($sql);
@@ -59,6 +63,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           sessionStorage.fonts = true;
         },
       });
+    </script>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Criar um elemento para exibir a mensagem
+            let msgBox = document.createElement("div");
+            msgBox.textContent = "<?php echo $mensagem; ?>";
+            msgBox.style.position = "fixed";
+            msgBox.style.top = "10px";
+            msgBox.style.left = "50%";
+            msgBox.style.transform = "translateX(-50%)";
+            msgBox.style.background = "red";
+            msgBox.style.color = "white";
+            msgBox.style.padding = "10px 20px";
+            msgBox.style.borderRadius = "5px";
+            msgBox.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.3)";
+            msgBox.style.zIndex = "1000";
+            document.body.appendChild(msgBox);
+
+            // Remover a mensagem após 3 segundos
+            setTimeout(function() {
+                msgBox.style.transition = "opacity 0.5s";
+                msgBox.style.opacity = "0";
+                setTimeout(() => msgBox.remove(), 500);
+            }, 3000);
+        });
     </script>
 
     <!-- CSS Files -->
@@ -417,6 +447,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p>Tem certeza que deseja remover o user <strong><?php echo htmlspecialchars($userData['name']); ?></strong> (<?php echo htmlspecialchars($userData['papel']); ?>)?</p>
                         <form method="post" action="funcionario_apagar_funcionario.php">
                             <input type="hidden" name="id" value="<?php echo $userData['id']; ?>">
+                            
                             <button type="submit" class="btn btn-danger">Sim, remover</button>
                             <a href="funcionario_ver_funcionario.php" class="btn btn-secondary">Cancelar</a>
                         </form>

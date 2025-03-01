@@ -408,7 +408,7 @@ $allPartsResult = $conn->query($sqlAllParts);
                         <h4>Peças Adicionadas para esta Solicitação</h4>
                         <?php
                         if ($partsResult && $partsResult->num_rows > 0) {
-                            echo "<table class='table table-bordered'>
+                            echo "<table class='table table-hover'>
                                     <tr>
                                         <th>Peça</th>
                                         <th>Quantidade Utilizada</th>

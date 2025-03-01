@@ -280,12 +280,13 @@ $tecnico_id = $_SESSION['user_id'];
                                         <th>Descrição</th>
                                         <th>Status</th>
                                     </tr>';
+
                             while($row = $result->fetch_assoc()){
                                 echo "<tr>
                                         <td>{$row['id']}</td>
                                         <td>{$row['cliente_name']}</td>
                                         <td>{$row['descricao']}</td>
-                                        <td>{$row['status']}</td>
+                                        <td><span class='badge bg-success'>Finalizado</span></td>
                                     </tr>";
                             }
                             echo '</table>';

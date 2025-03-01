@@ -5,6 +5,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['papel'] != 'tecnico') {
     exit;
 }
 include '../../db/db.php';
+$tecnico_id = $_SESSION['user_id'];
 
 if (isset($_POST['pedido_id'])) {
     $pedido_id = intval($_POST['pedido_id']);
@@ -25,7 +26,9 @@ if ($total_missing > 0) {
 
 // Atualiza o status da solicitação para "finished"
 $sqlUpdate = "UPDATE pedidos SET status='montado' WHERE id = $pedido_id";
+$sqlTecnicoStatusUpdate = "UPDATE users SET status = 'disponivel' WHERE id = $tecnico_id";
 if ($conn->query($sqlUpdate) === TRUE) {
+    $conn->query($sqlTecnicoStatusUpdate);
     header("Location: comprovante_montagem.php?id=" . $pedido_id);
     exit;
 } else {

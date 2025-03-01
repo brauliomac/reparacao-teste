@@ -31,8 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -69,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="../../assets/css/demo.css" />
+  
   </head>
   <body>
     <div class="wrapper">
@@ -142,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sair">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="far fa-chart-bar"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>
@@ -263,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <button type="submit" class="btn btn-primary mx-3">Enviar Solicitação</button>
                         </form>
+
                     </div>
                   </div>
                 </div>
@@ -316,6 +316,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Kaiadmin JS -->
     <script src="../../assets/js/kaiadmin.min.js"></script>
-
-  </body>
+    
 </html>

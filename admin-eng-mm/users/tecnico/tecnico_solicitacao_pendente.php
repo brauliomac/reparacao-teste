@@ -273,6 +273,7 @@ $tecnico_id = $_SESSION['user_id'];
                       $sql = "SELECT r.*, u.name AS cliente_name FROM pedidos r JOIN users u ON r.cliente_id = u.id WHERE r.tecnico_id = $tecnico_id AND r.status = 'atribuido' ORDER BY r.data_criacao ASC";
                       $result = $conn->query($sql);
                         if($result->num_rows > 0){
+
                             echo '<table class="table table-hover">
                                     <tr>
                                         <th>ID</th>
@@ -282,11 +283,13 @@ $tecnico_id = $_SESSION['user_id'];
                                         <th>Ação</th>
                                     </tr>';
                             while($row = $result->fetch_assoc()){
+                              $statusClass = $row['status'] == 'diagnosticado' ? 'info' : 'primary';
                                 echo "<tr>
                                         <td>{$row['id']}</td>
                                         <td>{$row['cliente_name']}</td>
                                         <td>{$row['descricao']}</td>
-                                        <td>{$row['status']}</td>
+                                        
+                                        <td><span class='badge bg-{$statusClass}'>{$row['status']}</span></td>
                                         <td>
                                             <a href='diagnostico.php?id={$row['id']}' class='btn btn-sm btn-success'>Diagnosticar</a>
                                         </td>

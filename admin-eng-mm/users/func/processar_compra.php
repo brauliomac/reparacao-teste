@@ -23,7 +23,7 @@ $componente_id = $compra['componente_id'];
 $quantidade_necessaria = intval($compra['quantidade_necessaria']);
 
 // Atualiza o estoque: adiciona a quantidade comprada à peça
-$sqlUpdateInventory = "UPDATE registo SET quantidade = quantidade + $quantidade_necessaria WHERE id = $componente_id";
+$sqlUpdateInventory = "UPDATE registo SET quantidade = 0 WHERE id = $componente_id";
 if (!$conn->query($sqlUpdateInventory)) {
     die("Erro ao atualizar o estoque: " . $conn->error);
 }

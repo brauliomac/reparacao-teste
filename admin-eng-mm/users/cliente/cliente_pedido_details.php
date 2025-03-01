@@ -144,8 +144,8 @@ $pedido = $result->fetch_assoc();
               </li>
              
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#sair">
-                  <i class="fas fa-layer-group"></i>
+               <a data-bs-toggle="collapse" href="#sair">
+                  <i class="far fa-chart-bar"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>
