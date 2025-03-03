@@ -398,6 +398,7 @@ $result = $conn->query($sql);
                                     <th>ID</th>
                                     <th>Nome</th>
                                     <th>Usuário</th>
+                                    <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
@@ -408,6 +409,9 @@ $result = $conn->query($sql);
                                             <td><?php echo $row['id']; ?></td>
                                             <td><?php echo htmlspecialchars($row['name']); ?></td>
                                             <td><?php echo htmlspecialchars($row['username']); ?></td>
+                                            <td class="<?php echo ($row['status'] == 'disponivel') ? 'text-success' : (($row['status'] == 'ocupado') ? 'text-danger' : ''); ?>">
+                                                <?php echo htmlspecialchars($row['status']); ?>
+                                            </td>
                                             <td>
                                                 <a href="funcionario_edit_user.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary">Editar</a>
                                                 <a href="funcionario_apagar_tecnico.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger"

@@ -23,11 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         if (empty($name) || empty($username)) {
             $error = "Preencha todos os campos obrigatórios.";
+        } else if (strlen($name) < 4 || strlen($username) < 4) {
+          $error = "O campo Nome Completo e Usuario devem ter pelo menos 4 caracteres.";
+        } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $name) || !preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $username)) {
+          $error = "O campo Nome Completo e Usuario devem ter apenas letras e espaços.";
+        } else if (!empty($_POST['password']) && strlen($_POST['password']) < 4){
+            $error = "A Senha deve ter pelo menos 4 caracteres";
         } else {
             // Se uma nova senha for informada, atualiza-a; caso contrário, mantém a senha atual
             if (!empty($_POST['password'])) {
                 $password = $_POST['password'];
-                $sql = "UPDATE users SET name='$name', username='$username', password='$password' WHERE id=$cliente_id AND papel='cliente'";
+                  $sql = "UPDATE users SET name='$name', username='$username', password='$password' WHERE id=$cliente_id AND papel='cliente'";
             } else {
                 $sql = "UPDATE users SET name='$name', username='$username' WHERE id=$cliente_id AND papel='cliente'";
             }
@@ -36,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Atualiza os dados na sessão, se necessário
                 $_SESSION['name'] = $name;
             } else {
-                $error = "Erro ao atualizar os dados: " . $conn->error;
+                $error = "Erro ao atualizar os dados: ";
             }
         }
     } else {

@@ -27,15 +27,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (empty($componente)) {
             $error = "O nome do componente é obrigatório.";
-        } elseif ($quantidade < 0) {
-            $error = "A quantidade deve ser um número não negativo.";
+        } else if ($quantidade < 0) {
+            $error = "A quantidade deve ser um número positivo.";
+        } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $componente)) {
+          $error = "O Nome do Componente deve ter apenas letras e espaços.";
         } else {
             $componente = $conn->real_escape_string($componente);
             $sql = "UPDATE registo SET componente = '$componente', quantidade = $quantidade WHERE id = $component_id";
             if ($conn->query($sql) === TRUE) {
                 $success = "Componente atualizado com sucesso!";
             } else {
-                $error = "Erro ao atualizar componente: " . $conn->error;
+                $error = "Erro ao atualizar componente: ";
             }
         }
     } else {

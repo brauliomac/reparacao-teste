@@ -23,10 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       
       if (empty($name) || empty($username)) {
           $error = "Preencha todos os campos obrigatórios.";
+      } else if (strlen($name) < 4 || strlen($username) < 4) {
+          $error = "O campo Nome Completo e Usuario devem ter pelo menos 4 caracteres.";
+      } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $name) || !preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $username)) {
+          $error = "O campo Nome Completo e Usuario devem ter apenas letras e espaços.";
+      } else if (!empty($_POST['password']) && strlen($_POST['password']) < 4){
+          $error = "A Senha deve ter pelo menos 4 caracteres";
       } else {
           // Se uma nova senha for informada, atualize-a; caso contrário, mantenha a senha atual
           if (!empty($_POST['password'])) {
-              $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+              $password = $_POST['password'];
               $sql = "UPDATE users SET name='$name', username='$username', password='$password' WHERE id=$tecnico_id AND papel='tecnico'";
           } else {
               $sql = "UPDATE users SET name='$name', username='$username' WHERE id=$tecnico_id AND papel='tecnico'";

@@ -20,8 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $allowed_roles = array('cliente', 'tecnico');
         if (!in_array($papel, $allowed_roles)) {
             $error = "Função inválida.";
-        } elseif (empty($username) || empty($password) || empty($name)) {
+        } else if (empty($username) || empty($password) || empty($name)) {
             $error = "Preencha todos os campos.";
+        } else if (strlen($name) < 4 || strlen($username) < 4) {
+          $error = "O campo Nome Completo e Usuario devem ter pelo menos 4 caracteres.";
+        } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $name) || !preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $username)) {
+            $error = "O campo Nome Completo e Usuario devem ter apenas letras e espaços.";
+        } else if (!empty($_POST['password']) && strlen($_POST['password']) < 4){
+            $error = "A Senha deve ter pelo menos 4 caracteres";
         } else {
            // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $password = $_POST['password'];

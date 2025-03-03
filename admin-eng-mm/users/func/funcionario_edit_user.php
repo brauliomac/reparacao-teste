@@ -17,22 +17,36 @@ if (isset($_GET['id'])) {
     die("ID do usuário não informado.");
 }
 
+$sql_palel = "SELECT papel FROM users WHERE id = $user_id";
+$result = $conn->query($sql_palel);
+
+if ($result->num_rows > 0) {
+  $row = $result->fetch_assoc();
+  $papel_actual = $row['papel']; // Papel atual do usuário no BD
+} else {
+  die("Usuário não encontrado.");
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['name'], $_POST['username'], $_POST['papel'])) {
+    if (isset($_POST['name'], $_POST['username'])) {
         $name = $conn->real_escape_string(trim($_POST['name']));
         $username = $conn->real_escape_string(trim($_POST['username']));
-        $papel = $conn->real_escape_string(trim($_POST['papel']));
         $allowed_roles = array('cliente', 'tecnico', 'funcionario');
-        if (!in_array($papel, $allowed_roles)) {
-            $error = "Função inválida.";
-        } elseif (empty($name) || empty($username)) {
+        
+        if (empty($name) || empty($username)) {
             $error = "Preencha todos os campos.";
+        } else if (strlen($name) < 4 || strlen($username) < 4) {
+          $error = "O campo Nome Completo e Usuario devem ter pelo menos 4 caracteres.";
+        } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $name) || !preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $username)) {
+            $error = "O campo Nome Completo e Usuario devem ter apenas letras e espaços.";
+        } else if (!empty($_POST['password']) && strlen($_POST['password']) < 4){
+            $error = "A Senha deve ter pelo menos 4 caracteres";
         } else {
             if (!empty($_POST['password'])) {
                 $password = $_POST['password'];
-                $sql = "UPDATE users SET name='$name', username='$username', papel='$papel', password='$password' WHERE id=$user_id";
+                $sql = "UPDATE users SET name='$name', username='$username', password='$password', papel='$papel_actual' WHERE id=$user_id";
             } else {
-                $sql = "UPDATE users SET name='$name', username='$username', papel='$papel' WHERE id=$user_id";
+                $sql = "UPDATE users SET name='$name', username='$username', papel='$papel_actual' WHERE id=$user_id";
             }
             if ($conn->query($sql)) {
                 $success = "Usuário atualizado com sucesso.";

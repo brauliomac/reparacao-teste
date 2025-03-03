@@ -19,8 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Valida os dados
         if (empty($componente)) {
             $error = "O nome do componente é obrigatório.";
-        } elseif ($quantidade < 0) {
-            $error = "A quantidade deve ser um número não negativo.";
+        } else if ($quantidade < 0) {
+            $error = "A quantidade deve ser um número positivo.";
+        } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $componente)) {
+          $error = "O Nome do Componente deve ter apenas letras e espaços.";
         } else {
             // Sanitiza o valor antes de inserir no banco
             $componente = $conn->real_escape_string($componente);

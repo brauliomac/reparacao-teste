@@ -16,7 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $cliente_id = $_SESSION['user_id'];
         
         if (empty($descricao)) {
-            $error = "A descrição é obrigatória.";
+          $error = "A descrição é obrigatória.";
+        } else if (strlen($descricao) < 6) {
+          $error = "A descrição deve ter pelo menos 6 caracteres.";
+        } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $descricao)) {
+          $error = "A descrição deve conter apenas letras e espaços, sem números ou caracteres especiais.";
         } else {
           $sql = "INSERT INTO pedidos (cliente_id, descricao, prioridade, status) VALUES ($cliente_id, '$descricao', '$prioridade', 'pendente')";
           if ($conn->query($sql) === TRUE) {
@@ -126,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   <ul class="nav nav-collapse">
                     
                     <li>
-                      <a href="funcionario_add_cliente.php">
+                      <a href="cliente_novo_pedido.php">
                         <span class="sub-item">Adicionar </span>
                       </a>
                     </li>
