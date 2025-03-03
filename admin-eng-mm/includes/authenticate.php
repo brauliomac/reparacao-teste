@@ -21,6 +21,8 @@ if(isset($_POST['username']) && isset($_POST['password'])){
             exit;
         } else {
             echo "Senha incorreta.";
+            header("Location: ../login.php");
+            exit;
         }
     } else {
         echo "Usuário não encontrado.";

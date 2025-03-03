@@ -99,7 +99,7 @@ $cliente_id = $_SESSION['user_id'];
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-clipboard-list"></i>
                   <p>Solicitação</p>
                   <span class="caret"></span>
                 </a>
@@ -122,7 +122,7 @@ $cliente_id = $_SESSION['user_id'];
              
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sair">
-                  <i class="far fa-chart-bar"></i>
+                  <i class="fas fa-sign-out-alt"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>
@@ -286,7 +286,7 @@ $cliente_id = $_SESSION['user_id'];
                         <div
                           class="icon-big text-center icon-secondary bubble-shadow-small"
                         >
-                        <i class="fas fa-hourglass-half"></i>
+                        <i class="fas fa-check-circle"></i>
                         </div>
                       </div>
                       <div class="col col-stats ms-3 ms-sm-0">

@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </li>
               <li class="nav-item active">
                 <a data-bs-toggle="collapse" href="#base">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-clipboard-list"></i>
                   <p>Solicitação</p>
                   <span class="caret"></span>
                 </a>
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sair">
-                  <i class="far fa-chart-bar"></i>
+                <i class="fas fa-sign-out-alt"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>

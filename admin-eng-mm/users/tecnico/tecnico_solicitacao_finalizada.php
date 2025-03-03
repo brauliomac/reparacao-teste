@@ -102,7 +102,7 @@ $tecnico_id = $_SESSION['user_id'];
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-clipboard-list"></i>
                   <p>Solicitações</p>
                   <span class="caret"></span>
                 </a>
@@ -125,7 +125,7 @@ $tecnico_id = $_SESSION['user_id'];
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                  <i class="fas fa-th-list"></i>
+                  <i class="fas fa-wrench"></i>
                   <p>Montagem</p>
                   <span class="caret"></span>
                 </a>
@@ -144,7 +144,7 @@ $tecnico_id = $_SESSION['user_id'];
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#forms">
-                  <i class="fas fa-pen-square"></i>
+                <i class="fas fa-sign-out-alt"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>

@@ -97,7 +97,7 @@ $tecnico = $result->fetch_assoc();
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="#" class="logo">
+            <a href="tecnico_dashboard.php" class="logo">
               <img
                 src="../../assets/img/icon.png"
                 alt="navbar brand"
@@ -137,7 +137,7 @@ $tecnico = $result->fetch_assoc();
                 <div class="collapse" id="dashboard">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="../demo1/index.html">
+                      <a href="tecnico_dashboard.php">
                         <span class="sub-item">Dashboard</span>
                       </a>
                     </li>
@@ -152,7 +152,7 @@ $tecnico = $result->fetch_assoc();
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-clipboard-list"></i>
                   <p>Solicitações</p>
                   <span class="caret"></span>
                 </a>
@@ -175,7 +175,7 @@ $tecnico = $result->fetch_assoc();
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                  <i class="fas fa-th-list"></i>
+                  <i class="fas fa-wrench"></i>
                   <p>Montagem</p>
                   <span class="caret"></span>
                 </a>
@@ -194,7 +194,7 @@ $tecnico = $result->fetch_assoc();
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#forms">
-                  <i class="fas fa-pen-square"></i>
+                <i class="fas fa-sign-out-alt"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>
@@ -341,7 +341,7 @@ $tecnico = $result->fetch_assoc();
                               <label for="password">Senha (deixe em branco para manter a atual):</label>
                               <input type="password" name="password" id="password" class="form-control">
                           </div>
-                          <button type="submit" class="btn btn-primary">Actualizar</button>
+                          <button type="submit" class="btn btn-primary mx-3">Actualizar</button>
                       </form>
 
                     </div>

@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#solic">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-clipboard-list"></i>
                   <p>Solicitações</p>
                   <span class="caret"></span>
                 </a>
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-users"></i>
                   <p>Gerir Clientes</p>
                   <span class="caret"></span>
                 </a>
@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                  <i class="fas fa-th-list"></i>
+                  <i class="fas fa-user-cog"></i>
                   <p>Gerir Tecnicos</p>
                   <span class="caret"></span>
                 </a>
@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#forms">
-                  <i class="fas fa-pen-square"></i>
+                  <i class="fas fa-user-tie"></i>
                   <p>Gerir Funcionarios</p>
                   <span class="caret"></span>
                 </a>
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#tables">
-                  <i class="fas fa-table"></i>
+                  <i class="fas fa-warehouse"></i>
                   <p>Estoque de Peças</p>
                   <span class="caret"></span>
                 </a>
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#maps">
-                  <i class="fas fa-map-marker-alt"></i>
+                  <i class="fas fa-shopping-cart"></i>
                   <p>Departamento de Compras</p>
                   <span class="caret"></span>
                 </a>
@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#charts">
-                  <i class="far fa-chart-bar"></i>
+                  <i class="fas fa-file-alt"></i>
                   <p>Relatorio</p>
                   <span class="caret"></span>
                 </a>
@@ -293,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sair">
-                  <i class="far fa-chart-bar"></i>
+                  <i class="fas fa-sign-out-alt"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>

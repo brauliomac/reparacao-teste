@@ -138,7 +138,7 @@ $cliente = $result->fetch_assoc();
               </li>
               <li class="nav-item active">
                 <a data-bs-toggle="collapse" href="#base">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-clipboard-list"></i>
                   <p>Solicitação</p>
                   <span class="caret"></span>
                 </a>
@@ -161,7 +161,7 @@ $cliente = $result->fetch_assoc();
              
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sair">
-                  <i class="far fa-chart-bar"></i>
+                <i class="fas fa-sign-out-alt"></i>
                   <p>Sair</p>
                   <span class="caret"></span>
                 </a>
@@ -279,7 +279,7 @@ $cliente = $result->fetch_assoc();
                               <label for="password">Senha (deixe em branco para manter a atual):</label>
                               <input type="password" name="password" id="password" class="form-control">
                           </div>
-                          <button type="submit" class="btn btn-primary">Atualizar</button>
+                          <button type="submit" class="btn btn-primary mx-3">Atualizar</button>
                       </form>
 
                     </div>
