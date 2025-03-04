@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = "O nome do componente é obrigatório.";
         } else if ($quantidade < 0) {
             $error = "A quantidade deve ser um número positivo.";
-        } else if (!preg_match("/^[a-zA-ZÀ-ÿ\s]+$/", $componente)) {
+        } else if (!preg_match("/^[a-zA-Z][a-zA-Z0-9 ]*$/", $componente)) {
           $error = "O Nome do Componente deve ter apenas letras e espaços.";
         } else {
             $componente = $conn->real_escape_string($componente);
