@@ -388,6 +388,7 @@ include '../../db/db.php';
                                                 <th>Técnico Responsável</th>
                                                 <th>Status</th>
                                                 <th>Data Finalização</th>
+                                                <th>Ações</th>
                                             </tr>
                                         </thead>
                                         <tbody>';
@@ -404,6 +405,11 @@ include '../../db/db.php';
                                         <td>" . ($row['tecnico_name'] ? $row['tecnico_name'] : 'Não atribuído') . "</td>
                                         <td><span class='badge bg-success'>Finalizado</span></td>
                                         <td>" . date('d/m/Y H:i', strtotime($row['data_actualizacao'])) . "</td>
+                                        <td>
+                                            <a href='gerar_fatura.php?id={$row['id']}' class='btn btn-primary btn-sm'>
+                                                 Baixar Factura
+                                            </a>
+                                        </td>
                                     </tr>";
                             }
                             echo '</tbody></table></div>';

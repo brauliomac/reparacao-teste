@@ -21,7 +21,6 @@ if (isset($_GET['id'])) {
 }
 
 // Consulta para buscar os detalhes da solicitação
-// Aqui, usamos LEFT JOIN para buscar o nome do técnico (caso já tenha sido atribuído)
 // A consulta garante que o cliente só possa ver as próprias solicitações
 $sql = "SELECT r.*, t.name AS tecnico_name 
         FROM pedidos r 
@@ -243,14 +242,16 @@ $pedido = $result->fetch_assoc();
                   </div>
                   <div class="card-body">
                     
-                  <h5 class="card-title">Descrição da Solicitação</h5>
-                      <p class="card-text"><?php echo nl2br(htmlspecialchars($pedido['descricao'])); ?></p>
+                  <h5 class="card-title"></h5>
+                      <p class="card-text"> <strong>Descrição: </strong><?php echo nl2br(htmlspecialchars($pedido['descricao'])); ?></p>
                       <p><strong>Data de Criação:</strong> <?php echo $pedido['data_criacao']; ?></p>
                       <?php if (!empty($pedido['data_actualizacao'])): ?>
-                          <p><strong>Data de Atualização:</strong> <?php echo $pedido['data_actualizacao']; ?></p>
+                          <p><strong>Data de Actualização:</strong> <?php echo $pedido['data_actualizacao']; ?></p>
                       <?php endif; ?>
                       <p><strong>Técnico Atribuído:</strong> <?php echo ($pedido['tecnico_name'] ? htmlspecialchars($pedido['tecnico_name']) : "Ainda não atribuído"); ?></p>
-
+                      <a href="gerar_solicitacao.php?id=<?php echo $pedido_id; ?>" class="btn btn-success mt-3">
+                          Baixar Factura 
+                      </a>
 
                     
                   </div>
