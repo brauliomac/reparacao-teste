@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           $error = "A descrição é obrigatória.";
         } else if (strlen($descricao) < 6) {
           $error = "A descrição deve ter pelo menos 6 caracteres.";
-        } else if (!preg_match("/^[a-zA-Z][a-zA-Z0-9]*$/", $descricao)) {
+        } else if (!preg_match("/^[a-zA-Z][a-zA-Z0-9 ]*$/", $descricao)) {
           $error = "A descrição deve começar com letra, e não ter caracter especial.";
         } else {
           $sql = "INSERT INTO pedidos (cliente_id, descricao, prioridade, status) VALUES ($cliente_id, '$descricao', '$prioridade', 'pendente')";
